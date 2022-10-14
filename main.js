@@ -50,14 +50,8 @@ var controller;
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
 
-var small_rock_rotation = [0,0,0];
-var small_rock_position = [-1,-3.5,0];
-
 var cubeRotation = [0,0,0];
 var cubePosition = [-1,0,0];
-
-var ground_rotation = [0,0,0];
-var ground_position = [0,-5,0];
 
 var cylinderRotation = [0,0,0];
 var cylinderPosition = [1.1,0,0];
@@ -227,6 +221,22 @@ function gPush() {
     MS.push(modelMatrix);
 }
 
+function generate_ground() {
+    /* Generates ground */
+    gPush();
+
+		gTranslate(0,-5,0);
+		gPush();
+		{
+            gScale(6,1,0);
+			setColor(vec4(0,0,0,0));
+            drawCube();
+		}
+		gPop();
+	gPop();
+
+}
+
 function generate_rock(x,y,z, size) {
     /* Creating a second rock */
 
@@ -245,6 +255,43 @@ function generate_rock(x,y,z, size) {
 
 }
 
+function generate_seaweed(x,y,z) {
+    var scale = 0.3;
+    for (let i = 0; i < 19; i++) {
+        gPush();
+            // Put the sphere where it should be!
+            gTranslate(x,scale*i+y,z); //Places object at target location
+            gPush();
+            {
+                // Draw the sphere!
+                gScale(.5*scale,scale,0.3);
+                setColor(vec4(0,.60,.10));
+                /* Animation
+                seaweed_rotation[1] = Math.cos(seaweed_rotation[1]);
+		    	gRotate(seaweed_rotation[1],0,1,0);
+                */
+                drawSphere();
+            }
+            gPop();
+    gPop();
+
+        i++;
+    }
+}
+
+function generate_fish() {
+    gPush();
+		gTranslate(conePosition[0],conePosition[1],conePosition[2]);
+		gPush();
+		{
+			setColor(vec4(1.0,1.0,0.0,1.0));
+			coneRotation[1] = coneRotation[1] + 90*dt;
+			gRotate(coneRotation[1],0,1,0);
+			drawCone();
+		}
+		gPop();
+	gPop();
+}
 
 function render(timestamp) {
     
@@ -279,11 +326,13 @@ function render(timestamp) {
 		dt = (timestamp - prevTime) / 1000.0;
 		prevTime = timestamp;
 	}
-
+    generate_ground(); 
+    /* generates large rock */
     generate_rock(0,-3.25,0,0.75);
-    /* Creating a second rock */
+    /* generates small rock */
     generate_rock(-1.25,-3.5,0,0.5);
-
+    generate_seaweed(0,-2.25,0);
+    generate_fish();
     // Cube example
 	gPush();
 		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
@@ -301,18 +350,7 @@ function render(timestamp) {
 		gPop();
 	gPop();
 
-    /* Ground Generation */
-    gPush();
-		gTranslate(ground_position[0],ground_position[1],ground_position[2]);
-		gPush();
-		{
-            gScale(6,1,0);
-			setColor(vec4(0,0,0,0));
-            drawCube();
-		}
-		gPop();
-	gPop();
-
+    
 
 	// Cylinder example
 	gPush();
