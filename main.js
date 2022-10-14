@@ -51,16 +51,19 @@ var controller;
 // Then the animation is simply evolving those DOF over time.
 
 var cubeRotation = [0,0,0];
-var cubePosition = [-1,0,0];
 
 var cylinderRotation = [0,0,0];
-var cylinderPosition = [1.1,0,0];
+
+var fishRotation = [0,0,0];
+
+//var swRotation = [0,0,0];
 
 var coneRotation = [0,0,0];
-var conePosition = [3,0,0];
 
 var sphereRotation = [0,0,0];
-var spherePosition = [-1,0,0];
+
+var left_leg_rot = [0,0,0];
+
 
 // Setting the colour which is needed during illumination of a surface
 function setColor(c)
@@ -269,10 +272,9 @@ function generate_seaweed(x,y,z) {
                 // Draw the sphere!
                 gScale(.5*scale,scale,0.3);
                 setColor(vec4(0,.60,.10));
-                /* Animation
-                seaweed_rotation[1] = Math.cos(seaweed_rotation[1]);
-		    	gRotate(seaweed_rotation[1],0,1,0);
-                */
+                //Animation
+                //swRotation[1] = Math.cos(TIME);
+		    	//gRotate(swRotation[1],0,1,0);
                 drawSphere();
             }
             gPop();
@@ -321,10 +323,6 @@ function generate_face(x,y,z,size) {
             gPush();
             {
                 setColor(vec4(0.5,0.5,0.5));
-                /*
-                coneRotation[1] = coneRotation[1] + 30*dt;
-                gRotate(coneRotation[1],0,1,0);
-                */
                 drawCone();
             }
             generate_eye(x0,y0,z0,1/4);
@@ -340,10 +338,6 @@ function generate_tail(x,y,z,size) {
             gPush();
             {
                 setColor(vec4(0.7,0.1,0.1));
-                /*
-                coneRotation[1] = coneRotation[1] + 30*dt;
-                gRotate(coneRotation[1],0,1,0);
-                */
                 gScale(size,size,-size*4);
                 drawCone();
             }
@@ -352,12 +346,29 @@ function generate_tail(x,y,z,size) {
     gPop();
 }
 
+function generate_fin(x,y,z,size) {
+    gPush();
+    	// Cone example
+		gTranslate(x,y,z);
+        gScale(size,size,size);
+            gPush();
+            {
+                setColor(vec4(0.8,0.8,0));
+                coneRotation[1] = coneRotation[1] + Math.cos(TIME);
+                coneRotation[2] = Math.cos(TIME + 1);
+                gRotate(coneRotation[1],0,1,0);
+                drawCone();
+            }
+            gPop();
+    gPop();
+
+}
 function generate_fish(x,y,z,size) {
     gPush();
     {
-        coneRotation[1] = coneRotation[1] - 30*dt;
-        gRotate(coneRotation[1],0,1,0);
-
+        fishRotation[1] = fishRotation[1] - 30*dt;
+        gRotate(fishRotation[1],0,1,0);
+        y = Math.cos(timestamp + 1);
         gTranslate(x,y,z);
         gScale(size,size,size);
         generate_tail(x,y,z,size);
@@ -407,26 +418,124 @@ function render(timestamp) {
     generate_seaweed(-.55,-2.7,0);
     generate_seaweed(.55,-2.7,0);
 
-    generate_fish(1,0,0,6/7);
-
-   /* 
+   /// generate_fish(1,0,0,6/7);
+    var y = 0;
+    var z = 0;
+    gPush();
+    {
+        fishRotation[1] = fishRotation[1] - 30*dt;
+        gRotate(fishRotation[1],0,1,0);
+        y = 0.5 * Math.cos(timestamp/1000) - 1;
+        gTranslate(1,y,0);
+        gScale(6/7,6/7,6/7);
+        generate_tail(1,y,0,6/7);
+        generate_face(1,y,0+1.83,(36/49));
+    }
+    gPop();
+ 
     // Cube example
 	gPush();
-		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
+        gTranslate(4+ (Math.cos(timestamp/1000)/4),(Math.cos(timestamp/1000)/4),0);
+        gScale(3/5,1,1);
+			setColor(vec4(0.77,0.39,.87));
 		gPush();
 		{
-			setColor(vec4(0.0,1.0,0.0,1.0));
-			// Here is an example of integration to rotate the cube around the y axis at 30 degrees per second
-			// new cube rotation around y = current cube rotation around y + 30deg/s*dt
-			cubeRotation[1] = cubeRotation[1] + 30*dt;
-			// This calls a simple helper function to apply the rotation (theta, x, y, z), 
-			// where x,y,z define the axis of rotation. Here is is the y axis, (0,1,0).
+            //Body
+			cubeRotation[1] = -15;//4*Math.cos(timestamp /1000);//cubeRotation[1] + 30*dt;
 			gRotate(cubeRotation[1],0,1,0);
 			drawCube();
+            gScale(5/3,1,1);
 		}
+        gTranslate(0,1.5,0);
+        gPush();
+        {
+            //Head
+            gScale(.5,.5,.5);
+            drawSphere();
+            gScale(2,2,2);
+        }
+        gPop();
+        gTranslate(0,-2.5,0);
+        gPush();
+        {
+            //Hip
+            gScale(0.6,.25,1);
+            drawCube();
+            gScale(1/.6,1/.25,1);
+        }
+        gPush();
+            gTranslate(-1/4,-1,1);
+            //Swing here 
+            gPush();
+            {
+
+                cubeRotation[1] = -15 //4*Math.cos(timestamp /1000);//cubeRotation[1] + 30*dt;
+			gRotate(cubeRotation[1],Math.cos(timestamp/1000),1,0);
+                gScale(1/6,3/4,1/4);
+                drawCube();
+                //Leg
+            }
+                gTranslate(0,-2.05,0);
+                gPush();
+                {
+                    //sub-knee
+                    gRotate(cubeRotation[2],0,0,100);
+                    gScale(1,1,1);
+                    drawCube();
+                }
+                gTranslate(0,-1.25,1);
+                gPush();
+                {
+                    gScale(1,1/4,2);
+                    gRotate(cubeRotation[2],0,0,100);
+                    drawCube();
+
+                    //foot
+                }
+                gPop();
+                gPop();
+            gPop();
+            gTranslate(4/5,0,0);
+            gPush();
+            {
+
+             cubeRotation[1] = -15; //4*Math.cos(timestamp /1000);//cubeRotation[1] + 30*dt;
+			gRotate(cubeRotation[1],-Math.cos(timestamp/1000),1,0);
+
+                //Leg
+                gScale(1/6,3/4,1/4);
+                drawCube();
+                gScale(6,4/3,4);
+            }
+            gTranslate(0,-1.8,0);
+
+                gPush();
+                {
+                    //sub-knee
+                    //cubeRotation[2] = -30;
+                    gRotate(cubeRotation[2],0,0,100);
+                    gScale(1/6,1,1/4);
+                    drawCube();
+
+                }
+                gTranslate(0,-.8,1);
+                gPush();
+                {
+                    gScale(1,.2,2);
+                    gRotate(cubeRotation[2],0,0,100);
+                    drawCube();
+
+                    //foot
+                }
+
+                gPop();
+
+            gPop();
+
+        gPop();
 		gPop();
 	gPop();
-
+/*
 	// Cylinder example
 	gPush();
 		gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
