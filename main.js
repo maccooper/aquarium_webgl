@@ -309,10 +309,11 @@ function generate_eye(x,y,z,size) {
     gPop();
 }
 
+
 function generate_face(x,y,z,size) {
     var x0 = 0.5;
     var y0 = 0.5;
-    var z0 = 0;
+    var z0 = -.2;
     gPush();
     	// Cone example
 		gTranslate(x,y,z);
@@ -320,8 +321,10 @@ function generate_face(x,y,z,size) {
             gPush();
             {
                 setColor(vec4(0.5,0.5,0.5));
+                /*
                 coneRotation[1] = coneRotation[1] + 30*dt;
                 gRotate(coneRotation[1],0,1,0);
+                */
                 drawCone();
             }
             generate_eye(x0,y0,z0,1/4);
@@ -330,10 +333,38 @@ function generate_face(x,y,z,size) {
     gPop();
 }
 
-function generate_fish(x,y,z,size) {
-    //generate_rock
+function generate_tail(x,y,z,size) {
+    gPush();
+        gTranslate(x,y,z);
+        gScale(size,size,size);
+            gPush();
+            {
+                setColor(vec4(0.7,0.1,0.1));
+                /*
+                coneRotation[1] = coneRotation[1] + 30*dt;
+                gRotate(coneRotation[1],0,1,0);
+                */
+                gScale(size,size,-size*4);
+                drawCone();
+            }
+            
+            gPop();
+    gPop();
 }
 
+function generate_fish(x,y,z,size) {
+    gPush();
+    {
+        coneRotation[1] = coneRotation[1] + 30*dt;
+        gRotate(coneRotation[1],0,1,0);
+
+        gTranslate(x,y,z);
+        gScale(size,size,size);
+        generate_tail(x,y,z,size);
+        generate_face(x,y,1.8+z,6*size/7);
+    }
+    gPop();
+}
 function render(timestamp) {
     
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -373,9 +404,9 @@ function render(timestamp) {
     /* generates small rock */
     generate_rock(-1.25,-3.5,0,0.5);
     generate_seaweed(0,-2.25,0);
-    generate_face(conePosition[0],conePosition[1],conePosition[2],1);
-    generate_fish(-4,0,0,1);
-    //generate_eye(-4,0,0,1);
+    generate_fish(-1,0,0,6/7);
+
+   /* 
     // Cube example
 	gPush();
 		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
@@ -393,10 +424,6 @@ function render(timestamp) {
 		gPop();
 	gPop();
 
-    //Making a fucking eyeball
-    //
-    //
-    
 	// Cylinder example
 	gPush();
 		gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
@@ -410,8 +437,7 @@ function render(timestamp) {
 		gPop();
 	gPop();	
         //Sphere 
-      
-    
+   */ 
     if( animFlag )
         window.requestAnimFrame(render);
 }
