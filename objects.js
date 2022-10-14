@@ -79,8 +79,8 @@ SphereSub.divideTriangle = function (a, b, c, count) {
 
 
 SphereSub.tetrahedron = function (a, b, c, d, n) {
-    this.divideTriangle(a, b, c, n);
-    this.divideTriangle(d, c, b, n);
+    //this.divideTriangle(a, b, c, n);
+    //this.divideTriangle(d, c, b, n);
     this.divideTriangle(a, d, b, n);
     this.divideTriangle(a, c, d, n);
 }

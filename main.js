@@ -49,11 +49,15 @@ var controller;
 // These are used to store the current state of objects.
 // In animation it is often useful to think of an object as having some DOF
 // Then the animation is simply evolving those DOF over time.
-var sphereRotation = [0,0,0];
-var spherePosition = [-4,0,0];
+
+var small_rock_rotation = [0,0,0];
+var small_rock_position = [-1,-3.5,0];
 
 var cubeRotation = [0,0,0];
 var cubePosition = [-1,0,0];
+
+var ground_rotation = [0,0,0];
+var ground_position = [0,-5,0];
 
 var cylinderRotation = [0,0,0];
 var cylinderPosition = [1.1,0,0];
@@ -223,12 +227,30 @@ function gPush() {
     MS.push(modelMatrix);
 }
 
+function generate_rock(x,y,z, size) {
+    /* Creating a second rock */
+
+    gPush();
+            // Put the sphere where it should be!
+            gTranslate(x,y,z); //Places object at target location
+            gPush();
+            {
+                // Draw the sphere!
+                gScale(size,size,size);
+                setColor(vec4(0.4,0.4,0.4,0));
+                drawSphere();
+            }
+            gPop();
+    gPop();
+
+}
+
 
 function render(timestamp) {
     
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     
-    eye = vec3(0,0,10);
+    eye = vec3(0,0,20);
     MS = []; // Initialize modeling matrix stack
 	
 	// initialize the modeling matrix to identity
@@ -257,21 +279,12 @@ function render(timestamp) {
 		dt = (timestamp - prevTime) / 1000.0;
 		prevTime = timestamp;
 	}
-	
-	// Sphere example
-	gPush();
-		// Put the sphere where it should be!
-		gTranslate(spherePosition[0],spherePosition[1],spherePosition[2]);
-		gPush();
-		{
-			// Draw the sphere!
-			setColor(vec4(1.0,0.0,0.0,1.0));
-			drawSphere();
-		}
-		gPop();
-	gPop();
-    
-	// Cube example
+
+    generate_rock(0,-3.25,0,0.75);
+    /* Creating a second rock */
+    generate_rock(-1.25,-3.5,0,0.5);
+
+    // Cube example
 	gPush();
 		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
 		gPush();
@@ -287,7 +300,20 @@ function render(timestamp) {
 		}
 		gPop();
 	gPop();
-    
+
+    /* Ground Generation */
+    gPush();
+		gTranslate(ground_position[0],ground_position[1],ground_position[2]);
+		gPush();
+		{
+            gScale(6,1,0);
+			setColor(vec4(0,0,0,0));
+            drawCube();
+		}
+		gPop();
+	gPop();
+
+
 	// Cylinder example
 	gPush();
 		gTranslate(cylinderPosition[0],cylinderPosition[1],cylinderPosition[2]);
