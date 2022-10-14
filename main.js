@@ -355,13 +355,13 @@ function generate_tail(x,y,z,size) {
 function generate_fish(x,y,z,size) {
     gPush();
     {
-        coneRotation[1] = coneRotation[1] + 30*dt;
+        coneRotation[1] = coneRotation[1] - 30*dt;
         gRotate(coneRotation[1],0,1,0);
 
         gTranslate(x,y,z);
         gScale(size,size,size);
         generate_tail(x,y,z,size);
-        generate_face(x,y,1.8+z,6*size/7);
+        generate_face(x,y,z+1.83,6*size/7);
     }
     gPop();
 }
@@ -404,7 +404,10 @@ function render(timestamp) {
     /* generates small rock */
     generate_rock(-1.25,-3.5,0,0.5);
     generate_seaweed(0,-2.25,0);
-    generate_fish(-1,0,0,6/7);
+    generate_seaweed(-.55,-2.7,0);
+    generate_seaweed(.55,-2.7,0);
+
+    generate_fish(1,0,0,6/7);
 
    /* 
     // Cube example
