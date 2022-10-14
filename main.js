@@ -291,16 +291,16 @@ function generate_eye(x,y,z,size) {
                 // Draw the sphere!
                 gScale(size,size,size);
                 setColor(vec4(.8,.8,.8));
-                sphereRotation[1] = sphereRotation[1] + 30*dt;
-                gRotate(sphereRotation[1],0,1,0);
+                //sphereRotation[1] = sphereRotation[1] + 30*dt;
+                //gRotate(sphereRotation[1],0,1,0);
                 drawSphere();
             }
                 gTranslate(0,0,1);
-                gScale(1.25,1.25,1);
+                gScale(.75,.75,.75);
                 gPush();
                 {
                     //Draw a pupil
-                    gScale(size/2,size/2,size/2);
+                    gScale(1,1,1);
                     setColor(vec4(0,0,0));
                     drawCone();
                 }
@@ -308,9 +308,32 @@ function generate_eye(x,y,z,size) {
             gPop();
     gPop();
 }
-function generate_fin() {
-    
+
+function generate_face(x,y,z,size) {
+    var x0 = 0.5;
+    var y0 = 0.5;
+    var z0 = 0;
+    gPush();
+    	// Cone example
+		gTranslate(x,y,z);
+        gScale(size,size,size);
+            gPush();
+            {
+                setColor(vec4(0.5,0.5,0.5));
+                coneRotation[1] = coneRotation[1] + 30*dt;
+                gRotate(coneRotation[1],0,1,0);
+                drawCone();
+            }
+            generate_eye(x0,y0,z0,1/4);
+            generate_eye(-x0,y0,z0,1/4);
+            gPop();
+    gPop();
 }
+
+function generate_fish(x,y,z,size) {
+    //generate_rock
+}
+
 function render(timestamp) {
     
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -350,8 +373,9 @@ function render(timestamp) {
     /* generates small rock */
     generate_rock(-1.25,-3.5,0,0.5);
     generate_seaweed(0,-2.25,0);
-    //generate_fish();
-    generate_eye(-4,0,0,1);
+    generate_face(conePosition[0],conePosition[1],conePosition[2],1);
+    generate_fish(-4,0,0,1);
+    //generate_eye(-4,0,0,1);
     // Cube example
 	gPush();
 		gTranslate(cubePosition[0],cubePosition[1],cubePosition[2]);
@@ -387,29 +411,7 @@ function render(timestamp) {
 	gPop();	
         //Sphere 
       
-    gPush();
-	// Cone example
-    	gPush();
-		gTranslate(conePosition[0],conePosition[1],conePosition[2]);
-            gPush();
-            {
-                setColor(vec4(1.0,1.0,0.0,1.0));
-                coneRotation[1] = coneRotation[1] + 90*dt;
-                gRotate(coneRotation[1],0,1,0);
-                drawCone();
-            }
-            gPop();
-            gTranslate(1,0,0);
-            gPush();
-            {
-                gScale(0.2,0.2,0.2);
-                setColor(vec4(0,0,0));
-                drawSphere();
-            }
-            gPop();
-    	gPop();
-    gPop();
-
+    
     if( animFlag )
         window.requestAnimFrame(render);
 }
